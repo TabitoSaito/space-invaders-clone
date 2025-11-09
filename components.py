@@ -10,10 +10,12 @@ BULLET_SHAPE = ((-1, 12), (1, 12), (1, -12), (-1, -12))
 WINDOW_SIZE = (900, 900)
 GAME_WIDTH = 700
 GAME_HEIGHT = 800
-GAME_BORDER = [(-GAME_WIDTH/2, GAME_HEIGHT/2),
-               (GAME_WIDTH/2, GAME_HEIGHT/2),
-               (GAME_WIDTH/2, -GAME_HEIGHT/2),
-               (-GAME_WIDTH/2, -GAME_HEIGHT/2)]
+GAME_BORDER = [
+    (-GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    (GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    (GAME_WIDTH / 2, -GAME_HEIGHT / 2),
+    (-GAME_WIDTH / 2, -GAME_HEIGHT / 2),
+]
 
 FONT_BIG = ("Arial", 24, "bold")
 
@@ -22,7 +24,6 @@ ALIEN_SCORE = 50
 
 
 class GameBrain:
-
     def __init__(self, highscore: int):
         self.screen_width = WINDOW_SIZE[0]
         self.screen_height = WINDOW_SIZE[1]
@@ -39,7 +40,7 @@ class GameBrain:
         self.alien_pos_y = 240
         self.alien_pos_x = -200
         self.bunker_pos_y = -200
-        self.bunker_pos_x = -GAME_WIDTH/2 + GAME_WIDTH/5
+        self.bunker_pos_x = -GAME_WIDTH / 2 + GAME_WIDTH / 5
 
         self.all_aliens: list[Alien] = []
         self.all_bunker: list[Bunker] = []
@@ -128,7 +129,7 @@ class GameBrain:
             bunker = Bunker()
             self.all_bunker.append(bunker)
             bunker.spawn((self.bunker_pos_x, self.bunker_pos_y))
-            self.bunker_pos_x += GAME_WIDTH/5
+            self.bunker_pos_x += GAME_WIDTH / 5
 
     def move_bullets(self):
         for bullet in self.all_bullets:
@@ -173,10 +174,9 @@ class GameBrain:
                 self.all_bullets.remove(bullet)
                 bullet.destroy()
 
-    def get_outermost_alien(self, left: bool = False,
-                            right: bool = False,
-                            bot: bool = False) -> dict[str:float]:
-
+    def get_outermost_alien(
+        self, left: bool = False, right: bool = False, bot: bool = False
+    ) -> dict[str:float]:
         value_dict = {}
         if left:
             min_x = 0
@@ -203,11 +203,11 @@ class GameBrain:
 
     def move_aliens(self):
         border_dict = self.get_outermost_alien(right=True, left=True)
-        if border_dict["left"] <= -GAME_WIDTH/2 + 30:
+        if border_dict["left"] <= -GAME_WIDTH / 2 + 30:
             for alien in self.all_aliens:
                 alien.move_down()
                 self.alien_trajectory = 0
-        if border_dict["right"] >= GAME_WIDTH/2 - 30:
+        if border_dict["right"] >= GAME_WIDTH / 2 - 30:
             for alien in self.all_aliens:
                 alien.move_down()
                 self.alien_trajectory = 1
@@ -267,7 +267,6 @@ class GameBrain:
 
 
 class Ui(turtle.Turtle):
-
     def __init__(self, highscore: int):
         super().__init__()
         self.speed("fastest")
@@ -333,7 +332,6 @@ class Ui(turtle.Turtle):
 
 
 class Canon(turtle.Turtle):
-
     def __init__(self):
         super().__init__()
         self.velocity = 1
@@ -350,20 +348,19 @@ class Canon(turtle.Turtle):
         return bullet
 
     def move_left(self):
-        if self.xcor() > -GAME_WIDTH/2 + 30:
+        if self.xcor() > -GAME_WIDTH / 2 + 30:
             new_x = self.xcor() - self.velocity
             self.goto(x=new_x, y=self.ycor())
 
     def move_right(self):
-        if self.xcor() < GAME_WIDTH/2 - 30:
+        if self.xcor() < GAME_WIDTH / 2 - 30:
             new_x = self.xcor() + self.velocity
             self.teleport(x=new_x, y=self.ycor())
 
 
 class Bullet(turtle.Turtle):
-
     def __init__(self, origin: str):
-        """origin: 'friendly' | 'enemy' """
+        """origin: 'friendly' | 'enemy'"""
         super().__init__()
         self.velocity = 1
         self.origin = origin
@@ -374,7 +371,6 @@ class Bullet(turtle.Turtle):
         self.shape("Bullet")
         self.teleport(x=pos[0], y=pos[1])
         match self.origin:
-
             case "friendly":
                 self.seth(90)
 
@@ -395,7 +391,6 @@ class Bullet(turtle.Turtle):
 
 
 class Alien(turtle.Turtle):
-
     def __init__(self, velocity: float):
         super().__init__()
         self.velocity: float = velocity
@@ -423,7 +418,7 @@ class Alien(turtle.Turtle):
         self.teleport(x=self.pos()[0], y=self.pos()[1] - 40)
 
     def try_shoot(self, probability: int = BULLET_PROP) -> Bullet | None:
-        dice = random.randint(0, int(100/probability))
+        dice = random.randint(0, int(100 / probability))
         if dice <= 1:
             bullet = Bullet(origin="enemy")
             bullet.spawn(self.pos())
@@ -433,7 +428,6 @@ class Alien(turtle.Turtle):
 
 
 class Bunker(turtle.Turtle):
-
     def __init__(self):
         super().__init__()
         self.life = 5
@@ -457,6 +451,3 @@ class Bunker(turtle.Turtle):
     def destroy(self):
         self.hideturtle()
         self.teleport(GAME_WIDTH, GAME_HEIGHT)
-
-
-

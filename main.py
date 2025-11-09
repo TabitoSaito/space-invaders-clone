@@ -3,7 +3,6 @@ import time
 
 
 def main():
-
     with open("highscore.txt", mode="r") as file:
         highscore = int(file.read())
 
